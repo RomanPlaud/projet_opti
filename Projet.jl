@@ -7,5 +7,3 @@ Projet:
 
 using StatsBase
 
-V = Array{[]}
-function
