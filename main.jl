@@ -7,19 +7,20 @@ main:
 
 #QUESTION
 
-function main3()
+include("Projet.jl")
+
+function question2_a()
     G_max = 200
     T = 10
     K = 0
     p = 0.9
     #V=[[0 for i in 0:T+1] for j in 0:G_max+1]
-    V = zeros(Float64,(T,G_max+1)::Tuple)
+    V = zeros(Float64,(T+1,G_max+1)::Tuple)
     V[end,:]=K*ones(Int,G_max+1)
     Q = zeros(Float64,(G_max+1,G_max)::Tuple)
     pi = -1*ones(Float64,T)
 
-    for t in  T-1:-1:1
-        println(t)
+    for t in  T:-1:1
         for g in 1:G_max+1
             V[t,g]=10^(5)
             for a in 1:(G_max-g)
@@ -36,10 +37,14 @@ function main3()
 
 end
 
+question2_a()
+
+
+
+
 function test()
     L= [i for i in 1:10]
     print(L[1])
 end
 
 #test()
-main3()
