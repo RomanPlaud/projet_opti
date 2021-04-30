@@ -53,7 +53,6 @@ function proba(i,j,k)
     occ=0
     for i in 1:10^5
         dices = rand(1:6,4)
-        #print(dices)
         if legal_move(dices,i) || legal_move(dices,j) || legal_move(dices,k)
             occ+=1
         end
@@ -61,7 +60,7 @@ function proba(i,j,k)
     return occ/10^5
 end
 
-print(proba(2,7,12))
+#print(proba(2,7,12))
 
 function test()
     L= [i for i in 1:10]

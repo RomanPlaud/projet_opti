@@ -55,7 +55,7 @@ end
 #Question 2
 function policy_q2(gs::game_state, adm_movement)
     best_mov = 1
-    nb =0
+    nb = 0
     mov = adm_movement[1]
     for j in 1:length(mov)
         if (mov[j] in gs.non_terminated_columns)
@@ -86,8 +86,11 @@ function policy_q2(gs::game_state)
         j = open_colons[2]
         k = open_colons[3]
         p = proba(i,j,k)
-        G_max = (2i-1)+(2j-1)+(2k-1)
-        g = gs.players_position[gs.active_player][i]+gs.tentitative_movement[i]+gs.players_position[gs.active_player][j]+gs.tentitative_movement[j]+ gs.players_position[gs.active_player][k]+gs.tentitative_movement[k]
+        d_i = column_length[i]-(gs.tentitative_movement[i]+gs.players_position[gs.active_player][i])
+        d_j = column_length[j]-(gs.tentitative_movement[j]+gs.players_position[gs.active_player][j])
+        d_k = column_length[k]-(gs.tentitative_movement[k]+gs.players_position[gs.active_player][k])
+        G_max = minimum([d_i,d_j,d_k])
+        g = 0
         pi = poli_opti_q2(G_max,p)
         nb_opti = pi[gs.n_turn,g]
 
