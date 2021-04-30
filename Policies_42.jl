@@ -41,20 +41,60 @@ movement in column 2 and 5.
 
 Finally you can access the length of column j by column_length[j].
 """
+
+include("functions.jl")
+
 function policy_q1(gs::game_state, adm_movement)
     return 1 #choose the first admissible movement offered
 end
 function policy_q1(gs::game_state)
+    #println("non terminated ", gs.non_terminated_columns)
     return (sum(gs.tentitative_movement) > 2)
 end
 
 #Question 2
 function policy_q2(gs::game_state, adm_movement)
-    return 1
+    best_mov = 1
+    nb =0
+    mov = adm_movement[1]
+    for j in 1:length(mov)
+        if (mov[j] in gs.non_terminated_columns)
+            nb+=1
+        end
+    end
+
+    for i in 2:length(adm_movement)
+        nb_mov =0
+        for j in 1:length(mov)
+            if (mov[j] in gs.non_terminated_columns)
+                nb_mov+=1
+            end
+        end
+        if nb_mov>nb
+            best_mov = i
+            nb = nb_mov
+        end
+    end
+    return best_mov
 end
 function policy_q2(gs::game_state)
-    return (sum(gs.tentitative_movement) > 2)
+    open_colons = gs.open_columns
+    if length(open_colons)<3
+        return false
+    else
+        i = open_colons[1]
+        j = open_colons[2]
+        k = open_colons[3]
+        p = proba(i,j,k)
+        G_max = (2i-1)+(2j-1)+(2k-1)
+        g = gs.players_position[gs.active_player][i]+gs.tentitative_movement[i]+gs.players_position[gs.active_player][j]+gs.tentitative_movement[j]+ gs.players_position[gs.active_player][k]+gs.tentitative_movement[k]
+        pi = poli_opti_q2(G_max,p)
+        nb_opti = pi[gs.n_turn,g]
+
+        return (sum(gs.tentitative_movement) > nb_opti)
+    end
 end
+
 
 #Question 3
 function policy_q3(gs::game_state, adm_movement)

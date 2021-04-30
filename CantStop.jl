@@ -57,6 +57,7 @@ non_terminated_columns = []
     end
 return non_terminated_columns
 end
+
 function create_non_terminated_columns(gs::game_state)
     return create_non_terminated_columns(gs.players_position,gs.tentitative_movement,gs.active_player)
 end
