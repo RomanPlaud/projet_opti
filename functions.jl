@@ -5,6 +5,8 @@ functions:
 - Date: 2021-04-30
 =#
 
+include("CantStop.jl'")
+
 #QUESTION 2:
 
 function poli_opti_q2(G_max::Int,p::Float64,T::Int)
@@ -38,7 +40,7 @@ end
 function legal_move(dices,i)
     n = length(dices)
     for k in 1:n
-        for j in (k+1):n
+        for j in 1:n
             if dices[k]+dices[j]==i
                 return true
             end
@@ -59,6 +61,20 @@ function proba(i,j,k)
     return occ/10^5
 end
 
+function check(adm_move,i::Int,j::Int,k::Int)
+    for paire in adm_move
+        if paire[1]==i || paire[1]==j
+        end
+    end
+end
+
+function proba_b(i,j,k):
+    occ=0
+    for i in I:10^5
+        adm_mov = throw()
+        if
+    end
+end
 print(proba(2,7,12))
 
 function test()
