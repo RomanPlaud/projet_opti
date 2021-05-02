@@ -101,10 +101,32 @@ end
 
 #Question 3
 function policy_q3(gs::game_state, adm_movement)
-    return 1
+    best_mov = -1
+    best_d = Inf
+    for j in 1:length(adm_movement)
+        mov = adm_movement[j]
+        for i in 1:length(mov)
+            d = column_length[mov[i]]-(gs.tentitative_movement[mov[i]]+gs.players_position[gs.active_player][mov[i]])
+             if d<best_d
+                 best_d = d
+                 best_mov = j
+             end
+        end
+    end
+    return best_mov
 end
 function policy_q3(gs::game_state)
-    return (sum(gs.tentitative_movement) > 2)
+    open_colons = gs.open_columns
+    if length(open_colons)<3
+        return false
+    else
+        i = open_colons[1]
+        j = open_colons[2]
+        k = open_colons[3]
+        p = proba(i,j,k)
+        nb_opti = - floor(1/log(pi))
+    end
+    return (sum(gs.tentitative_movement) > nb_opti)
 end
 
 #Question 4

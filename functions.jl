@@ -20,7 +20,7 @@ function poli_opti_q2(G_max::Int,p::Float64,T=10^3)
 
     for t in  T:-1:1
         for g in 1:G_max
-            V[t,g]=10^(5)
+            V[t,g]=Inf
             for a in 1:(G_max-g+1)
                 Q[g,a]=1+(p^a)*V[t+1,g+a]+(1-p^a)*V[t+1,g]
                 if Q[g,a]<V[t,g]
