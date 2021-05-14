@@ -54,6 +54,7 @@ end
 
 #Question 2
 function policy_q2(gs::game_state, adm_movement)
+
     position = gs.players_position[gs.active_player]
     best_mov = -1
     best_d = 100

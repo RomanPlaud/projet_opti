@@ -92,7 +92,7 @@ function poli_opti_q4(i::Int,j::Int,k::Int,T::Int=30)
 
     V = zeros((T+1,g_i+1,g_j+1,g_k+1,g_i+1,g_j+1,g_k+1))
 
-    V[T,end,end,end]= 10*ones((g_i+1, g_j+1, g_k+1)::Tuple)
+    V[T,end,end,end]= 10*ones((g_i+1, g_j+1, g_k+1)::Tuple) #LA IL Y A UNE ERREUR
     Q = zeros((g_i+1,g_j+1,g_k+1,g_i+1,g_j+1, g_k+1,2))
     pi = -1*ones((T,g_i+1,g_j+1,g_k+1,g_i+1, g_j+1, g_k+1))
 
