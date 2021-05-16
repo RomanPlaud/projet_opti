@@ -82,7 +82,7 @@ function legal_move_ijk(l,i,j,k)
   return [move for move in moves if ( length(move)!=0)]
 end
 
-println(legal_move_ijk([1,1,1,1],2,3,12))
+#println(legal_move_ijk([1,1,1,1],2,3,12))
 
 function poli_opti_q4(i::Int,j::Int,k::Int,T::Int=30)
     p_lanc = 1/(6^4)
@@ -178,7 +178,8 @@ function coeff(counter)::Float64
     end
 end
 
-function poli_opti_q4_opt(i::Int,j::Int,k::Int,T::Int=30)
+function poli_opti_q4_opt(i::Int,j::Int,k::Int,x::Int,y::Int,z::Int,T::Int=30)
+    println("entrer")
     p_lanc = 1/(6^4)
     g_i = 2*(7-abs(i-7))-1
     g_j = 2*(7-abs(j-7))-1
@@ -191,10 +192,10 @@ function poli_opti_q4_opt(i::Int,j::Int,k::Int,T::Int=30)
 
     for t in T:-1:1
       println("t ", t)
-      for i in g_i+1:-1:1
+      for i in g_i+1:-1:(x+1)
         println("i ", i)
-        for j in g_j+1:-1:1
-          for k in g_k+1:-1:1
+        for j in g_j+1:-1:(y+1)
+          for k in g_k+1:-1:(z+1)
             for d_i in g_i-i+1:-1:1
               for d_j in g_j-j+1:-1:1
                 for d_k in g_k-k+1:-1:1
@@ -210,8 +211,8 @@ function poli_opti_q4_opt(i::Int,j::Int,k::Int,T::Int=30)
                             for dice4 in dice3:6
                               l = [dice1, dice2, dice3, dice4]
                               c = counter(l)
-                              counter = [c[i] for i in 1:6 if c[i]>0]
-                              p_lanc = coeff(counter)*1/6^4
+                              A = [c[i] for i in 1:6 if c[i]>0]
+                              p_lanc = coeff(A)*1/6^4
                               moves = legal_move_ijk(l, i, j, k)
                               if length(moves)==0
                                 Q[i,j,k,d_i,d_j,d_k,a] = Q[i,j,k,d_i,d_j,d_k,a] + p_lanc*(1 + V[t+1, i, j, k, 1, 1, 1])
@@ -258,8 +259,8 @@ function poli_opti_q4_opt(i::Int,j::Int,k::Int,T::Int=30)
     end
     return pi
 end
-
-@time pi = poli_opti_q4(2,3,12,20)
+println("hello")
+@time pi = poli_opti_q4_opt(7,8,9,5,5,5,20)
 
 function test()
     l = [1,2,3,3,4,4,4,6]
@@ -267,3 +268,5 @@ function test()
     A=[c[i] for i in 1:length(c)]
     return maximum(A)
 end
+
+#print(test())
