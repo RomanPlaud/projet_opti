@@ -4,7 +4,7 @@ functions:
 - Author: cgris
 - Date: 2021-04-30
 =#
-
+using DataStructures
 include("CantStop.jl")
 
 #QUESTION 2:
@@ -92,14 +92,13 @@ function poli_opti_q4(i::Int,j::Int,k::Int,T::Int=30)
 
     V = zeros((T+1,g_i+1,g_j+1,g_k+1,g_i+1,g_j+1,g_k+1))
 
-    V[T,end,end,end]= 10*ones((g_i+1, g_j+1, g_k+1)::Tuple) #LA IL Y A UNE ERREUR
     Q = zeros((g_i+1,g_j+1,g_k+1,g_i+1,g_j+1, g_k+1,2))
     pi = -1*ones((T,g_i+1,g_j+1,g_k+1,g_i+1, g_j+1, g_k+1))
 
     for t in T:-1:1
-      print(t)
+      println("t ", t)
       for i in g_i+1:-1:1
-        print(i)
+        println("i ", i)
         for j in g_j+1:-1:1
           for k in g_k+1:-1:1
             for d_i in g_i-i+1:-1:1
@@ -109,7 +108,7 @@ function poli_opti_q4(i::Int,j::Int,k::Int,T::Int=30)
                   for a in 1:2
                     Q[i,j,k,d_i,d_j,d_k,a]=0
                     if a==0
-                      Q[i,j,k,d_i,d_j,d_k,a] = Q[i,j,k,d_i,d_j,d_k,a] + 1 + V[t+1, i+d_i, j+d_j, k+d_k, 0, 0, 0]
+                      Q[i,j,k,d_i,d_j,d_k,a] = Q[i,j,k,d_i,d_j,d_k,a] + 1 + V[t+1, i+d_i, j+d_j, k+d_k, 1, 1, 1]
                     else
                       for dice1 in 1:6
                         for dice2 in 1:6
@@ -118,19 +117,19 @@ function poli_opti_q4(i::Int,j::Int,k::Int,T::Int=30)
                               l = [dice1, dice2, dice3, dice4]
                               moves = legal_move_ijk(l, i, j, k)
                               if length(moves)==0
-                                Q[i,j,k,d_i,d_j,d_k,a] = Q[i,j,k,d_i,d_j,d_k,a] + p_lanc*(1 + V[t+1, i, j, k, 0, 0, 0])
+                                Q[i,j,k,d_i,d_j,d_k,a] = Q[i,j,k,d_i,d_j,d_k,a] + p_lanc*(1 + V[t+1, i, j, k, 1, 1, 1])
                               else
-                                mini::Float = Inf
+                                mini = Inf
                                 best_move = []
                                 for move in moves
-                                  if len(move)==1
-                                    v = V[t, i, j, k, minimum([g_i,d_i + (i==move[0])]) , minimum([g_j, d_j + (j==move[0])]),minimum([g_k, d_k + (k==move[0])])]
+                                  if length(move)==1
+                                    v = V[t, i, j, k, minimum([g_i,d_i + (i==move[1])]) , minimum([g_j, d_j + (j==move[1])]),minimum([g_k, d_k + (k==move[1])])]
                                     if v<=mini
                                       mini = v
                                       best_move = move
                                     end
                                   else
-                                    v = V[t, i, j, k, minimum([g_i, d_i + (i==move[0])+(i==move[1])]), minimum([g_j, d_j + (j==move[0])+(j==move[1])]), minimum([g_k, d_k + (k==move[0]) + (k==move[1])])]
+                                    v = V[t, i, j, k, minimum([g_i, d_i + (i==move[1])+(i==move[2])]), minimum([g_j, d_j + (j==move[1])+(j==move[2])]), minimum([g_k, d_k + (k==move[1]) + (k==move[2])])]
                                     if v<=mini
                                       mini = v
                                       best_move = move
@@ -138,9 +137,9 @@ function poli_opti_q4(i::Int,j::Int,k::Int,T::Int=30)
                                   end
                                 end
                                 if length(best_move)==1
-                                  Q[i,j,k,d_i,d_j,d_k,a] = Q[i,j,k,d_i,d_j,d_k,a] + p_lanc*(V[t, i, j, k, minimum([g_i, d_i + (i==best_move[0])]), minimum([g_j, d_j + (j==best_move[0])]), minimum([g_k, d_k + (k==best_move[0])])])
+                                  Q[i,j,k,d_i,d_j,d_k,a] = Q[i,j,k,d_i,d_j,d_k,a] + p_lanc*(V[t, i, j, k, minimum([g_i, d_i + (i==best_move[1])]), minimum([g_j, d_j + (j==best_move[1])]), minimum([g_k, d_k + (k==best_move[1])])])
                                 else
-                                  Q[i,j,k,d_i,d_j,d_k,a] = Q[i, j, k, d_i, d_j, d_k, a] + p_lanc*(V[t, i, j, k, minimum([g_i, d_i + (i==best_move[0]) + (i==best_move[1])]), minimum([g_j, d_j + (j==best_move[0])+(j==best_move[1])]), minimum([g_k, d_k + (k==best_move[0])+(k==best_move[1])])])
+                                  Q[i,j,k,d_i,d_j,d_k,a] = Q[i, j, k, d_i, d_j, d_k, a] + p_lanc*(V[t, i, j, k, minimum([g_i, d_i + (i==best_move[1]) + (i==best_move[2])]), minimum([g_j, d_j + (j==best_move[1])+(j==best_move[2])]), minimum([g_k, d_k + (k==best_move[1])+(k==best_move[2])])])
                                 end
                               end
                             end
@@ -163,9 +162,108 @@ function poli_opti_q4(i::Int,j::Int,k::Int,T::Int=30)
     return pi
 end
 
-pi = poli_opti_q4(2,3,12,1)
+function coeff(counter)::Float64
+    if maximum(counter) == 4
+      return 1
+    elseif maximum(counter) == 3
+      return 4
+    elseif maximum(counter) == 2
+      if minimum(counter)== 2
+        return 6
+      else
+        return 12
+      end
+    else
+        return 24
+    end
+end
+
+function poli_opti_q4_opt(i::Int,j::Int,k::Int,T::Int=30)
+    p_lanc = 1/(6^4)
+    g_i = 2*(7-abs(i-7))-1
+    g_j = 2*(7-abs(j-7))-1
+    g_k = 2*(7-abs(k-7))-1
+
+    V = zeros((T+1,g_i+1,g_j+1,g_k+1,g_i+1,g_j+1,g_k+1))
+
+    Q = zeros((g_i+1,g_j+1,g_k+1,g_i+1,g_j+1, g_k+1,2))
+    pi = -1*ones((T,g_i+1,g_j+1,g_k+1,g_i+1, g_j+1, g_k+1))
+
+    for t in T:-1:1
+      println("t ", t)
+      for i in g_i+1:-1:1
+        println("i ", i)
+        for j in g_j+1:-1:1
+          for k in g_k+1:-1:1
+            for d_i in g_i-i+1:-1:1
+              for d_j in g_j-j+1:-1:1
+                for d_k in g_k-k+1:-1:1
+                  V[t,i,j,k,d_i,d_j,d_k]::Float64=Inf
+                  for a in 1:2
+                    Q[i,j,k,d_i,d_j,d_k,a]=0
+                    if a==0
+                      Q[i,j,k,d_i,d_j,d_k,a] = Q[i,j,k,d_i,d_j,d_k,a] + 1 + V[t+1, i+d_i, j+d_j, k+d_k, 1, 1, 1]
+                    else
+                      for dice1 in 1:6
+                        for dice2 in dice1:6
+                          for dice3 in dice2:6
+                            for dice4 in dice3:6
+                              l = [dice1, dice2, dice3, dice4]
+                              c = counter(l)
+                              counter = [c[i] for i in 1:6 if c[i]>0]
+                              p_lanc = coeff(counter)*1/6^4
+                              moves = legal_move_ijk(l, i, j, k)
+                              if length(moves)==0
+                                Q[i,j,k,d_i,d_j,d_k,a] = Q[i,j,k,d_i,d_j,d_k,a] + p_lanc*(1 + V[t+1, i, j, k, 1, 1, 1])
+                              else
+                                mini = Inf
+                                best_move = []
+                                for move in moves
+                                  if length(move)==1
+                                    v = V[t, i, j, k, minimum([g_i,d_i + (i==move[1])]) , minimum([g_j, d_j + (j==move[1])]),minimum([g_k, d_k + (k==move[1])])]
+                                    if v<=mini
+                                      mini = v
+                                      best_move = move
+                                    end
+                                  else
+                                    v = V[t, i, j, k, minimum([g_i, d_i + (i==move[1])+(i==move[2])]), minimum([g_j, d_j + (j==move[1])+(j==move[2])]), minimum([g_k, d_k + (k==move[1]) + (k==move[2])])]
+                                    if v<=mini
+                                      mini = v
+                                      best_move = move
+                                    end
+                                  end
+                                end
+                                if length(best_move)==1
+                                  Q[i,j,k,d_i,d_j,d_k,a] = Q[i,j,k,d_i,d_j,d_k,a] + p_lanc*(V[t, i, j, k, minimum([g_i, d_i + (i==best_move[1])]), minimum([g_j, d_j + (j==best_move[1])]), minimum([g_k, d_k + (k==best_move[1])])])
+                                else
+                                  Q[i,j,k,d_i,d_j,d_k,a] = Q[i, j, k, d_i, d_j, d_k, a] + p_lanc*(V[t, i, j, k, minimum([g_i, d_i + (i==best_move[1]) + (i==best_move[2])]), minimum([g_j, d_j + (j==best_move[1])+(j==best_move[2])]), minimum([g_k, d_k + (k==best_move[1])+(k==best_move[2])])])
+                                end
+                              end
+                            end
+                          end
+                        end
+                      end
+                    end
+                    if Q[i, j, k, d_i, d_j, d_k, a]<V[t, i, j, k, d_i, d_j, d_k]
+                      V[t, i, j, k, d_i, d_j, d_k]=Q[i, j, k, d_i, d_j, d_k, a]
+                      pi[t, i, j, k, d_i, d_j, d_k] = a
+                    end
+                  end
+                end
+              end
+            end
+          end
+        end
+      end
+    end
+    return pi
+end
+
+@time pi = poli_opti_q4(2,3,12,20)
 
 function test()
-    L= [i for i in 1:10]
-    print(L[1])
+    l = [1,2,3,3,4,4,4,6]
+    c = counter(l)
+    A=[c[i] for i in 1:length(c)]
+    return maximum(A)
 end
