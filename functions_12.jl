@@ -184,12 +184,13 @@ function poli_opti_q4_opt(i::Int,j::Int,k::Int,x::Int,y::Int,z::Int,T::Int=30)
     g_i = 2*(7-abs(i-7))-1
     g_j = 2*(7-abs(j-7))-1
     g_k = 2*(7-abs(k-7))-1
-
+    println("creation")
     V = zeros((T+1,g_i+1,g_j+1,g_k+1,g_i+1,g_j+1,g_k+1))
-
+    print("... ")
     Q = zeros((g_i+1,g_j+1,g_k+1,g_i+1,g_j+1, g_k+1,2))
+    print("... ")
     pi = -1*ones((T,g_i+1,g_j+1,g_k+1,g_i+1, g_j+1, g_k+1))
-
+    println("end ")
     for t in T:-1:1
       println("t ", t)
       for i in g_i+1:-1:(x+1)
@@ -259,8 +260,8 @@ function poli_opti_q4_opt(i::Int,j::Int,k::Int,x::Int,y::Int,z::Int,T::Int=30)
     end
     return pi
 end
-println("hello")
-@time pi = poli_opti_q4_opt(7,8,9,5,5,5,20)
+#println("hello")
+#@time pi = poli_opti_q4_opt(3,4,5,1,1,2,20)
 
 function test()
     l = [1,2,3,3,4,4,4,6]

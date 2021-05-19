@@ -44,7 +44,7 @@ Finally you can access the length of column j by column_length[j].
 
 include("functions_12.jl")
 
-function policy_q1(gs::game_state, adm_movement)
+function policy_q(gs::game_state, adm_movement)
     best_mov = -1
     best_d = Inf
     best_pourcent =0.25
@@ -57,10 +57,32 @@ function policy_q1(gs::game_state, adm_movement)
                  best_d = d
                  best_mov = j
              end
-             if pourcent>best_pourcent
+             if pourcent<best_pourcent
                 best_move = j
                 best_pourcent = pourcent
             end
+        end
+    end
+    return best_mov
+end
+
+function policy_q1(gs::game_state, adm_movement)
+    best_mov = -1
+    best_score =0
+    for j in 1:length(adm_movement)
+        mov = adm_movement[j]
+        score = 0
+        for i in 1:length(mov)
+            pos = (gs.tentitative_movement[mov[i]]+gs.players_position[gs.active_player][mov[i]]+1)
+            percent = pos/column_length[mov[i]]
+            if percent ==1 && gs.players_position[gs.active_player][mov[i]]<column_length[mov[i]] #si on peut fermer on ferme
+                return j
+            end
+            score +=percent
+        end
+        if score>=best_score
+            best_score = score
+            best_mov = j
         end
     end
     return best_mov
@@ -81,7 +103,7 @@ end
 
 #Question 2
 
-function policy_q3(gs::game_state, adm_movement)
+function policy_q2(gs::game_state, adm_movement)
     best_mov = -1
     best_d = Inf
     best_pourcent =0.25
@@ -118,7 +140,7 @@ function policy_q2(gs::game_state)
         G_max = maximum([d_i,d_j,d_k])
         g = 0
         pi = poli_opti_q2(G_max,p)
-        nb_opti = pi[gs.n_turn][g+1]
+        nb_opti = pi[gs.n_turn,1]
 
         return (sum(gs.tentitative_movement) > nb_opti)
     end
@@ -126,7 +148,7 @@ end
 
 
 #Question 3
-function policy_q4(gs::game_state, adm_movement)
+function policy_q3(gs::game_state, adm_movement)
     position = gs.players_position[gs.active_player]
     best_mov = -1
     best_d = 100
@@ -183,21 +205,30 @@ end
 #Question 4
 
 function policy_q4(gs::game_state, adm_movement)
+    position = gs.players_position[gs.active_player]
     best_mov = -1
-    best_d = Inf
-    best_pourcent =0.25
+    best_d = 100
+    best_pos = 0
+    v = false
     for j in 1:length(adm_movement)
         mov = adm_movement[j]
         for i in 1:length(mov)
-            d = column_length[mov[i]]-(gs.tentitative_movement[mov[i]]+gs.players_position[gs.active_player][mov[i]])
-            pourcent = d/column_length[mov[i]]
-            if d<best_d
-                 best_d = d
-                 best_mov = j
-             end
-             if pourcent>best_pourcent
-                best_move = j
-                best_pourcent = pourcent
+            p = proba(mov[i],mov[i],mov[i])
+            if position[mov[i]]>0 #si on a deja avancé on continue
+                pos = position[mov[i]]
+                if pos/column_length[mov[i]]>best_pos
+                    best_pos = pos/column_length[mov[i]]
+                    best_mov = j
+                    v = true
+                end
+            else #sinon on prend celui ou il faut le moins avancer
+                if ! v
+                    d = column_length[mov[i]]-(gs.tentitative_movement[mov[i]]+gs.players_position[gs.active_player][mov[i]])
+                     if d<best_d
+                         best_d = d
+                         best_mov = j
+                     end
+                 end
             end
         end
     end
@@ -205,23 +236,44 @@ function policy_q4(gs::game_state, adm_movement)
 end
 
 function policy_q4(gs::game_state)
-    open_colons = gs.open_columns
-    if length(open_colons)<3
-        return false
-    else
-        i = open_colons[1]
-        j = open_colons[2]
-        k = open_colons[3]
-        p = proba(i,j,k)
-        d_i = column_length[i]-(gs.tentitative_movement[i]+gs.players_position[gs.active_player][i])
-        d_j = column_length[j]-(gs.tentitative_movement[j]+gs.players_position[gs.active_player][j])
-        d_k = column_length[k]-(gs.tentitative_movement[k]+gs.players_position[gs.active_player][k])
-        G_max = minimum([d_i,d_j,d_k])
-        g = 0
-        pi = poli_opti_q2(G_max,p)
-        nb_opti = pi[gs.n_turn][g+1]
+    if gs.nb_player>1
+        a = gs.active_player
+        win = zeros(gs.nb_player)
+        for i in 1:gs.nb_player
+            if i!=a
+                for c in 2:12
+                    if gs.players_position[i][c]/column_length[c] >0.75
+                        win[i]+=1
+                    end
+                end
+            end
+        end
 
-        return (sum(gs.tentitative_movement) > nb_opti)
+        if maximum(win)>3 #politique aggressive si presque fini
+            open_colons = gs.open_columns
+            if length(open_colons)<3
+                return false
+            else
+                i = open_colons[1]
+                j = open_colons[2]
+                k = open_colons[3]
+                p = proba(i,j,k)
+                return (sum(gs.tentitative_movement) > -1/log(p)*1.5)
+            end
+        else
+            open_colons = gs.open_columns
+            if length(open_colons)<3
+                return false
+            else
+                i = open_colons[1]
+                j = open_colons[2]
+                k = open_colons[3]
+                p = proba(i,j,k)
+                return (sum(gs.tentitative_movement) > -1/log(p))
+            end
+        end
+    else
+        return policy_q1(gs)
     end
 end
 

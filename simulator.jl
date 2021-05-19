@@ -5,15 +5,15 @@ include("Policies_12.jl") #replace 42 by your group number
 include("Policies_666.jl") #replace 666 by your adversary number
 using .Policies_12 , .Policies_666
 
-policy1 = Policies_12.policy_q3
-policy2 = Policies_12.policy_q2
+policy1 = Policies_12.policy_q1
+policy2 = Policies_12.policy_q4
 
 
 
 #Simulating a game with player1 policy
 
 gs = CantStop.game_state(1) #Initialising a one player game
-CantStop.simulate_game!(gs,[policy1,policy2], 3) # the third argument is a verbosity level
+CantStop.simulate_game!(gs,[policy1,policy2], 5) # the third argument is a verbosity level
 
 #Simulating 1000 games with policy1
 N=1000
