@@ -69,11 +69,15 @@ end
 function policy_q1(gs::game_state, adm_movement)
     best_mov = -1
     best_score = 0
+    double = -1
     for j in 1:length(adm_movement)
         mov = adm_movement[j]
         pos1 = (gs.tentitative_movement[mov[1]]+gs.players_position[gs.active_player][mov[1]])
+        d1 = column_length[mov[1]]-(gs.tentitative_movement[mov[1]]+gs.players_position[gs.active_player][mov[1]])
         pos2=0
+        d2 = 100
         if mov[2]!==0
+            d2 = column_length[mov[2]]-(gs.tentitative_movement[mov[2]]+gs.players_position[gs.active_player][mov[2]])
             pos2 = (gs.tentitative_movement[mov[2]]+gs.players_position[gs.active_player][mov[2]])
         end
         percent1 = pos1/column_length[mov[1]]
@@ -85,6 +89,14 @@ function policy_q1(gs::game_state, adm_movement)
         if score>=best_score
             best_score = score
             best_mov = j
+        end
+        if mov[1]==mov[2]
+            double = j
+        end
+    end
+    if best_score==0
+        if double!=-1
+            best_mov = double
         end
     end
     return best_mov
@@ -105,7 +117,7 @@ function policy_q1(gs::game_state)
         j = open_colons[2]
         k = open_colons[3]
         p = proba(i,j,k)
-        return (sum(gs.tentitative_movement) > -floor(1/log(p)))
+        return (sum(gs.tentitative_movement) > -floor(1/log(p))*2.5)
     end
 end
 
