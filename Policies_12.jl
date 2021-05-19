@@ -71,20 +71,17 @@ function policy_q1(gs::game_state, adm_movement)
     best_score = 0
     for j in 1:length(adm_movement)
         mov = adm_movement[j]
-        pos1 = (gs.tentitative_movement[mov[1]]+gs.players_position[gs.active_player][mov[1]]+1)
+        pos1 = (gs.tentitative_movement[mov[1]]+gs.players_position[gs.active_player][mov[1]])
         pos2=0
         if mov[2]!==0
-            pos2 = (gs.tentitative_movement[mov[2]]+gs.players_position[gs.active_player][mov[2]]+1)
-        end
-        if mov[1]==mov[2]
-            pos1+=1
+            pos2 = (gs.tentitative_movement[mov[2]]+gs.players_position[gs.active_player][mov[2]])
         end
         percent1 = pos1/column_length[mov[1]]
         percent2 = pos2/column_length[mov[2]]
-        if (percent1 >= 1 ) || (percent2 >= 1 ) #si on peut fermer on ferme
+        if (pos1 + 1 >= column_length[mov[1]] ) || (pos2 + 1 >= column_length[mov[2]]) || (mov[1]==mov[2] && pos1 + 2 >= column_length[mov[1]]) #si on peut fermer on ferme
             return j
         end
-        score =percent1 +percent2
+        score =percent1 + percent2
         if score>=best_score
             best_score = score
             best_mov = j
@@ -95,6 +92,12 @@ end
 
 function policy_q1(gs::game_state)
     open_colons = gs.open_columns
+    for i in open_colons
+        d = column_length[i]-(gs.tentitative_movement[i]+gs.players_position[gs.active_player,i])
+        if d <=0
+            return true
+        end
+    end
     if length(open_colons)<3
         return false
     else
@@ -102,7 +105,7 @@ function policy_q1(gs::game_state)
         j = open_colons[2]
         k = open_colons[3]
         p = proba(i,j,k)
-        return (sum(gs.tentitative_movement) > -1/log(p))
+        return (sum(gs.tentitative_movement) > -floor(1/log(p)))
     end
 end
 
