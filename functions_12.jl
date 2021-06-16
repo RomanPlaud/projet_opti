@@ -261,7 +261,7 @@ function poli_opti_q4_opt(i::Int,j::Int,k::Int,x::Int,y::Int,z::Int,T::Int=30)
     return pi
 end
 #println("hello")
-@time pi = poli_opti_q4_opt(3,4,5,1,1,2,20)
+#@time pi = poli_opti_q4_opt(3,4,5,1,1,2,20)
 
 
 #print(test())

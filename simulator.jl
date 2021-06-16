@@ -6,8 +6,8 @@ include("Policies_666.jl") #replace 666 by your adversary number
 using .Policies_12 , .Policies_666
 
 policy1 = Policies_12.policy_q1
-policy2 = Policies_12.policy_q6
-
+policy2 = Policies_12.policy_q2
+policy3 = Policies_12.policy_q6
 
 #Simulating a game with player1 policy
 
@@ -15,8 +15,8 @@ policy2 = Policies_12.policy_q6
 #CantStop.simulate_game!(gs,[policy1], 5) # the third argument is a verbosity level
 
 #Simulating 1000 games with policy1
-"""
-N=10000
+
+N=20000
 
 nb_turns, winner = test_policy([policy1],N)
 println("stratégie pour 1 joueur termine en ",sum(nb_turns)/N," tours")
@@ -43,7 +43,6 @@ println("winners ", winner)
 #gs = game_state(2)
 #simulate_game!(gs,[policy1,policy2], 5)
 
-# plotting a game
-#include("plot_position.jl")
-#plot_position(gs)
-#plot!()
+gs = game_state(2)
+simulate_game!(gs,[policy1,policy2], 5)
+"""

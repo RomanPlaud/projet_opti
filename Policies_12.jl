@@ -64,7 +64,7 @@ function policy_q1(gs::game_state, adm_movement)
         end
     end
     if best_score==0
-        if double!=-1 #s'il y a un double et qu'aucune colonne n'est commencé on joue le double
+        if double!=-1 #s'il y a un double et qu'aucune colonne n'est commencée on joue le double
             return double
         else
             return 1
@@ -117,7 +117,7 @@ function policy_q2(gs::game_state)
         d_k = column_length[k]-(gs.tentitative_movement[k]+gs.players_position[gs.active_player][k])
         G_max = maximum([d_i,d_j,d_k])
         g = 0
-        pi = poli_opti_q2(G_max,p)
+        pi = poli_opti_q2(G_max,p) #politique optimale Q2 avec parametres Gmax et g
         nb_opti = pi[gs.n_turn,g+1]
 
         return (sum(gs.tentitative_movement) > nb_opti*1.75)
@@ -245,7 +245,7 @@ function policy_q5(gs::game_state, adm_movement)
                 best_col = j
                 best_score_col = score_col
             end
-            if score_start>best_score_start
+            if score_start>best_score_start #mouvement avec le moins de pénalisation soit avec les colonne les moins entamées
                 best_start = j
                 best_score_start = score_start
             end
@@ -270,13 +270,14 @@ end
 
 #Question 6
 function policy_q6(gs::game_state, adm_movement)
-    return policy_q5(gs,adm_movement)
+    return policy_q5(gs,adm_movement) #evite colonne "prise" par les autres joueurs
 end
 
 function policy_q6(gs::game_state) #max agressivité (joue tant que pas fini)
-    return policy_q1(gs)
+    return policy_q1(gs) #joue sureté
 end
 
+"""
 #Question 7
 function policy_q7(gs::game_state, adm_movement)
     return 1
@@ -292,5 +293,5 @@ end
 function policy_q8(gs::game_state)
     return (sum(gs.tentitative_movement) > 2)
 end
-
+"""
 end #end of module
