@@ -261,13 +261,7 @@ function poli_opti_q4_opt(i::Int,j::Int,k::Int,x::Int,y::Int,z::Int,T::Int=30)
     return pi
 end
 #println("hello")
-#@time pi = poli_opti_q4_opt(3,4,5,1,1,2,20)
+@time pi = poli_opti_q4_opt(3,4,5,1,1,2,20)
 
-function test()
-    l = [1,2,3,3,4,4,4,6]
-    c = counter(l)
-    A=[c[i] for i in 1:length(c)]
-    return maximum(A)
-end
 
 #print(test())
